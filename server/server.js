@@ -30,11 +30,12 @@ io.on('connection', (socket) => {
   socket.broadcast.emit('newMessage', generateMessage(`Admin`, `New user joined`));
 
   // listens for a new message
-  socket.on('createMessage', (message) => {
+  socket.on('createMessage', (message, callback) => {
     console.log('createMessage', message);
     // emits the message to every single connected client
     io.emit('newMessage', generateMessage(message.from, message.text));
-
+    // server calls the callack from index.js for event acknowledgement
+    callback('This is from the server.');
   });
   // listens for the user disconnecting from server
   socket.on('disconnect', ()=>{
