@@ -50,15 +50,23 @@ io.on('connection', (socket) => {
 
   // listens for a new message
   socket.on('createMessage', (message, callback) => {
-    console.log('createMessage', message);
-    // emits the message to every single connected client
-    io.emit('newMessage', generateMessage(message.from, message.text));
+    var user = users.getUser(socket.id);
+
+    if(user && isRealString(message.text)) {
+      // emits the message to every single connected client
+      io.to(user.room).emit('newMessage', generateMessage(user.name, message.text));
+    }
     // server calls the callack from index.js for event acknowledgement
     callback();
   });
 
   socket.on('createLocationMessage', (coords) => {
-    io.emit('newLocationMessage', generateLocationMessage('Admin', coords.latitude, coords.longitude));
+    var user = users.getUser(socket.id);
+
+    if(user) {
+      // emits the message to every single connected client
+      io.to(user.room).emit('newLocationMessage', generateLocationMessage(user.name, coords.latitude, coords.longitude));
+    }
   });
 
   // listens for the user disconnecting from server
@@ -66,6 +74,7 @@ io.on('connection', (socket) => {
     console.log('User was disconnected');
     var user = users.removeUser(socket.id);
     if(user) {
+      // only emits specific to this room
       io.to(user.room).emit('updateUserList', users.getUserList(user.room));
       io.to(user.room).emit('newMessage', generateMessage('Admin', `${user.name} has left.`));
     }
