@@ -49,17 +49,17 @@ socket.on('disconnect', function () {
 });
 
 socket.on('updateUserList', function (users) {
-  var ol = document.createElement('ol');
+  var ul = document.createElement('ul');
   console.log(users);
   users.forEach(function(user) {
     var li = document.createElement('li');
     var text = document.createTextNode(user);
     li.appendChild(text);
-    ol.appendChild(li);
+    ul.appendChild(li);
   });
   // clears the list first then readds
   document.getElementById('users').innerHTML = '';
-  document.getElementById('users').appendChild(ol);
+  document.getElementById('users').appendChild(ul);
 });
 
 // custom listener
