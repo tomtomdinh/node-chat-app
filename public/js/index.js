@@ -1,5 +1,27 @@
 // makes a socket client request to the server
 var socket = io();
+
+function scrollToBottom() {
+  const messageList = document.getElementById('messages');
+  const newMessage = messageList.lastElementChild;
+  const prevMessage = newMessage.previousElementSibling;
+
+  const clientHeight = messageList.clientHeight;
+  const scrollTop = messageList.scrollTop;
+  const scrollHeight = messageList.scrollHeight;
+
+  const newMessageStyle = window.getComputedStyle(newMessage, null);
+  const newMessageHeight = parseInt(newMessageStyle.getPropertyValue("height"));
+  let prevMessageHeight = 0;
+  if (prevMessage) {
+    const prevMessageStyle = window.getComputedStyle(prevMessage, null);
+    prevMessageHeight = parseInt(prevMessageStyle.getPropertyValue("height"));
+  }
+
+  if ((clientHeight + scrollTop + newMessageHeight + prevMessageHeight) >= scrollHeight) {
+    messageList.scrollTop = scrollHeight;
+  }
+}
 // can make a connection event on the clientside
 socket.on('connect', function () {
   console.log('Connected to server');
@@ -19,14 +41,8 @@ socket.on('newMessage', function (message) {
     from: message.from,
     createdAt: formattedTime
   });
-  document.getElementById('messages').innerHTML += html
-
-  // var li = document.createElement("LI");
-  // var text = document.createTextNode(`${message.from} ${formattedTime}: ${message.text}`);
-  //
-  // li.appendChild(text);
-  // document.getElementById('messages').appendChild(li);
-
+  document.getElementById('messages').innerHTML += html;
+  scrollToBottom();
 });
 
 socket.on('newLocationMessage', function(message) {
@@ -37,7 +53,8 @@ socket.on('newLocationMessage', function(message) {
     createdAt: formattedTime,
     url: message.url
   });
-  document.getElementById('messages').innerHTML += html
+  document.getElementById('messages').innerHTML += html;
+  scrollToBottom();
 });
 
 window.onload = function() {
