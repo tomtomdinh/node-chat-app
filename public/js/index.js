@@ -13,29 +13,31 @@ socket.on('disconnect', function () {
 // custom listener
 socket.on('newMessage', function (message) {
   var formattedTime = moment(message.createdAt).format('h:mm a');
-  var li = document.createElement("LI");
-  var text = document.createTextNode(`${message.from} ${formattedTime}: ${message.text}`);
+  var template = document.getElementById('message-template').innerHTML;
+  var html = Mustache.render(template, {
+    text: message.text,
+    from: message.from,
+    createdAt: formattedTime
+  });
+  document.getElementById('messages').innerHTML += html
 
-  li.appendChild(text);
-  document.getElementById('messages').appendChild(li);
+  // var li = document.createElement("LI");
+  // var text = document.createTextNode(`${message.from} ${formattedTime}: ${message.text}`);
+  //
+  // li.appendChild(text);
+  // document.getElementById('messages').appendChild(li);
+
 });
 
 socket.on('newLocationMessage', function(message) {
   var formattedTime = moment(message.createdAt).format('h:mm a');
-  var li = document.createElement("LI");
-  var a = document.createElement("a");
-
-  var aText = document.createTextNode("My current location");
-  var liText = document.createTextNode(`${message.from} ${formattedTime}: `);
-
-  li.appendChild(liText);
-
-  a.setAttribute("target", "_blank");
-  a.setAttribute("href", message.url);
-  a.appendChild(aText);
-
-  li.appendChild(a);
-  document.getElementById('messages').appendChild(li);
+  var template = document.getElementById('location-message-template').innerHTML;
+  var html = Mustache.render(template, {
+    from: message.from,
+    createdAt: formattedTime,
+    url: message.url
+  });
+  document.getElementById('messages').innerHTML += html
 });
 
 window.onload = function() {
