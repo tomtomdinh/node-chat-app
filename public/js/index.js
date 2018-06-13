@@ -12,20 +12,21 @@ socket.on('disconnect', function () {
 
 // custom listener
 socket.on('newMessage', function (message) {
-  console.log('New message', message);
+  var formattedTime = moment(message.createdAt).format('h:mm a');
   var li = document.createElement("LI");
-  var text = document.createTextNode(`${message.from} : ${message.text}`);
+  var text = document.createTextNode(`${message.from} ${formattedTime}: ${message.text}`);
 
   li.appendChild(text);
   document.getElementById('messages').appendChild(li);
 });
 
 socket.on('newLocationMessage', function(message) {
+  var formattedTime = moment(message.createdAt).format('h:mm a');
   var li = document.createElement("LI");
   var a = document.createElement("a");
 
   var aText = document.createTextNode("My current location");
-  var liText = document.createTextNode(`${message.from}`);
+  var liText = document.createTextNode(`${message.from} ${formattedTime}: `);
 
   li.appendChild(liText);
 
