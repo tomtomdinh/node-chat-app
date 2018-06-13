@@ -35,7 +35,7 @@ io.on('connection', (socket) => {
     // emits the message to every single connected client
     io.emit('newMessage', generateMessage(message.from, message.text));
     // server calls the callack from index.js for event acknowledgement
-    callback('This is from the server.');
+    callback();
   });
 
   socket.on('createLocationMessage', (coords) => {
