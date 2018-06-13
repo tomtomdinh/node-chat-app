@@ -26,10 +26,40 @@ function scrollToBottom() {
 socket.on('connect', function () {
   console.log('Connected to server');
 
+  var params = new URLSearchParams(window.location.search);
+
+  var objParam = {
+    name: params.get("name"),
+    room: params.get("room")
+  }
+
+  socket.emit('join',objParam, function(err) {
+    if(err) {
+      alert(err);
+      window.location.href = '/';
+    } else {
+      console.log('No error');
+    }
+  });
+
 });
 
 socket.on('disconnect', function () {
   console.log('Disconnected from server');
+});
+
+socket.on('updateUserList', function (users) {
+  var ol = document.createElement('ol');
+  console.log(users);
+  users.forEach(function(user) {
+    var li = document.createElement('li');
+    var text = document.createTextNode(user);
+    li.appendChild(text);
+    ol.appendChild(li);
+  });
+  // clears the list first then readds
+  document.getElementById('users').innerHTML = '';
+  document.getElementById('users').appendChild(ol);
 });
 
 // custom listener
